@@ -74,9 +74,9 @@ export default {
 
 <style>
 .highlight {
-  background-color: lightcoral; /* Light coral background color for "Money Out" */
+  background-color: lightblue; /* Light blue background color for "Money In" */
 }
-/* Existing styles */
+
 .fixed-width-table {
   width: 100%;
   border-collapse: collapse;
