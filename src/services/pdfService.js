@@ -5,6 +5,8 @@ export default {
   getPdfContents() {
     return apiClient.get('/csvcontents/');
   },
-  // Add more functions for other CRUD operations as needed
+  deletePdfContent(id) { 
+    return apiClient.delete(`/pdfcontents/${id}/`); 
+  },
 };
 

@@ -1,23 +1,24 @@
 <template>
   <div>
-    <h1>CSV Contents</h1>
+    <h1>Transaction History</h1>
     <table class="fixed-width-table alternate-rows">
       <thead>
         <tr>
-          <th>Field2</th>
-          <th>Field3</th>
-          <th>Field4</th>
-          <th>Field5</th>
-          <th>Field6</th>
-          <th>Field7</th>
-          <th>Field8</th>
-          <th>Field9</th>
-          <th>Field10</th>
-          <th>Field11</th>
+          <th>Acc #</th>
+          <th>Posting Date</th>
+          <th>Transaction Date</th>
+          <th>Description</th>
+          <th>Original Description</th>
+          <th>Category</th>
+          <th>Money In</th>
+          <th>Money Out</th>
+          <th>Fees</th>
+          <th>Balance</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="pdf in pdfContents" :key="pdf.id">
+        <tr v-for="pdf in pdfContents" :key="pdf.id" :class="{ highlight: pdf.field9 !== 0 }">
           <td>{{ pdf.field2 }}</td>
           <td>{{ pdf.field3 }}</td>
           <td>{{ new Date(pdf.field4).toLocaleString() }}</td>
@@ -28,6 +29,9 @@
           <td>{{ pdf.field9 }}</td>
           <td>{{ pdf.field10 }}</td>
           <td>{{ pdf.field11 }}</td>
+          <td>
+            <button @click="deletePdfContent(pdf.id)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -56,11 +60,23 @@ export default {
         console.error('Error fetching PDF contents:', error);
       }
     },
+    async deletePdfContent(id) {
+      try {
+        await pdfService.deletePdfContent(id);
+        this.pdfContents = this.pdfContents.filter(content => content.id !== id);
+      } catch (error) {
+        console.error('Error deleting PDF content:', error);
+      }
+    },
   },
 };
 </script>
 
 <style>
+.highlight {
+  background-color: lightcoral; /* Light coral background color for "Money Out" */
+}
+/* Existing styles */
 .fixed-width-table {
   width: 100%;
   border-collapse: collapse;
