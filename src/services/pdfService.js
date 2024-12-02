@@ -5,8 +5,8 @@ export default {
   getPdfContents() {
     return apiClient.get('/csvcontents/');
   },
-  deletePdfContent(id) { 
-    return apiClient.delete(`/csvcontents/${id}/`); 
+  updatePdfContent(id, updatedData) { 
+    return apiClient.put(`/csvcontents/${id}/`, updatedData); 
   },
 };
 

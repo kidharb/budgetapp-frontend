@@ -18,19 +18,50 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="pdf in pdfContents" :key="pdf.id" :class="{ highlight: pdf.field9 !== 0 }">
-          <td>{{ pdf.field2 }}</td>
-          <td>{{ pdf.field3 }}</td>
-          <td>{{ new Date(pdf.field4).toLocaleString() }}</td>
-          <td>{{ pdf.field5 }}</td>
-          <td>{{ pdf.field6 }}</td>
-          <td>{{ pdf.field7 }}</td>
-          <td>{{ pdf.field8 }}</td>
-          <td>{{ pdf.field9 }}</td>
-          <td>{{ pdf.field10 }}</td>
-          <td>{{ pdf.field11 }}</td>
+        <tr v-for="(pdf, index) in pdfContents" :key="pdf.id" :class="{ highlight: pdf.field9 !== 0 }">
           <td>
-            <button @click="deletePdfContent(pdf.id)">Delete</button>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field2" />
+            <span v-else>{{ pdf.field2 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field3" />
+            <span v-else>{{ pdf.field3 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field4" />
+            <span v-else>{{ new Date(pdf.field4).toLocaleString() }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field5" />
+            <span v-else>{{ pdf.field5 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field6" />
+            <span v-else>{{ pdf.field6 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field7" />
+            <span v-else>{{ pdf.field7 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field8" />
+            <span v-else>{{ pdf.field8 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field9" />
+            <span v-else>{{ pdf.field9 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field10" />
+            <span v-else>{{ pdf.field10 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field11" />
+            <span v-else>{{ pdf.field11 }}</span>
+          </td>
+          <td>
+            <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
+            <button v-else @click="editRow(index)">Edit</button>
           </td>
         </tr>
       </tbody>
@@ -46,6 +77,7 @@ export default {
   data() {
     return {
       pdfContents: [],
+      editableRow: null, // Track the row being edited
     };
   },
   created() {
@@ -60,12 +92,16 @@ export default {
         console.error('Error fetching PDF contents:', error);
       }
     },
-    async deletePdfContent(id) {
+    editRow(index) {
+      this.editableRow = index; // Set the editable row
+    },
+    async updatePdfContent(id, index) {
       try {
-        await pdfService.deletePdfContent(id);
-        this.pdfContents = this.pdfContents.filter(content => content.id !== id);
+        const updatedData = this.pdfContents[index];
+        await pdfService.updatePdfContent(id, updatedData);
+        this.editableRow = null; // Reset the editable row after update
       } catch (error) {
-        console.error('Error deleting PDF content:', error);
+        console.error('Error updating PDF content:', error);
       }
     },
   },
@@ -74,7 +110,7 @@ export default {
 
 <style>
 .highlight {
-  background-color: lightblue; /* Light blue background color for "Money In" */
+  background-color: lightblue; /* Light blue background color for non-zero Money Out */
 }
 
 .fixed-width-table {
