@@ -62,6 +62,7 @@
           <td>
             <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
             <button v-else @click="editRow(index)">Edit</button>
+            <button @click="deletePDF(pdf.id)">Delete</button> <!-- Add this line -->
           </td>
         </tr>
       </tbody>
@@ -102,6 +103,14 @@ export default {
         this.editableRow = null; // Reset the editable row after update
       } catch (error) {
         console.error('Error updating PDF content:', error);
+      }
+    },
+    async deletePDF(id) {
+      try {
+        await pdfService.deletePdfContent(id); // Use the delete API
+        this.fetchPdfContents(); // Refresh the list after deletion
+      } catch (error) {
+        console.error('Error deleting PDF:', error);
       }
     },
   },

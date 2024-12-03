@@ -1,12 +1,14 @@
-// src/services/pdfService.js
-import apiClient from './api';
+// services/pdfService.js
+import axios from 'axios';
 
 export default {
   getPdfContents() {
-    return apiClient.get('/csvcontents/');
+    return axios.get('/api/csvcontents/');
   },
-  updatePdfContent(id, updatedData) { 
-    return apiClient.put(`/csvcontents/${id}/`, updatedData); 
+  updatePdfContent(id, data) {
+    return axios.put(`/api/csvcontents/${id}/`, data);
+  },
+  deletePdfContent(id) {
+    return axios.delete(`/api/csvcontents/${id}/delete_transaction/`);
   },
 };
-
