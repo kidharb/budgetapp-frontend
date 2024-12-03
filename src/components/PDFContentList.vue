@@ -35,6 +35,7 @@
               <option value="Day to Day">Day to Day</option>
               <option value="Exceptions">Exceptions</option>
               <option value="Transfers">Transfers</option>
+              <option value="Income">Income</option>
             </select>
             <span v-else>{{ transaction.group }}</span>
           </td>
