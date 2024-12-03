@@ -7,6 +7,7 @@
           <th>Transaction Date</th>
           <th>Description</th>
           <th>Category</th>
+          <th>Group</th>
           <th>Amount</th>
           <th>Balance</th>
           <th>Actions</th>
@@ -17,9 +18,12 @@
           <td>{{ new Date(pdf.field4).toLocaleString() }}</td>
           <td>{{ pdf.field5 }}</td>
           <td>{{ pdf.field7 }}</td>
-          <td>{{ getAmount(pdf) }}</td> <!-- Combine columns into Amount -->
+          <td>{{ pdf.field12 }}</td>
+          <td>{{ getAmount(pdf) }}</td>
           <td>{{ pdf.field11 }}</td>
           <td>
+            <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
+            <button v-else @click="editRow(index)">Edit</button>
             <button @click.stop="deletePDF(pdf.id)">Delete</button>
           </td>
         </tr>
