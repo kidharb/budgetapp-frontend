@@ -15,12 +15,29 @@
       </thead>
       <tbody>
         <tr v-for="(pdf, index) in pdfContents" :key="pdf.id">
-          <td>{{ new Date(pdf.field4).toLocaleString() }}</td>
-          <td>{{ pdf.field5 }}</td>
-          <td>{{ pdf.field7 }}</td>
-          <td>{{ pdf.field12 }}</td>
-          <td>{{ getAmount(pdf) }}</td>
-          <td>{{ pdf.field11 }}</td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field4" type="datetime-local" />
+            <span v-else>{{ new Date(pdf.field4).toLocaleString() }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field5" />
+            <span v-else>{{ pdf.field5 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field7" />
+            <span v-else>{{ pdf.field7 }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field12" />
+            <span v-else>{{ pdf.field12 }}</span>
+          </td>
+          <td>
+            <span>{{ getAmount(pdf) }}</span>
+          </td>
+          <td>
+            <input v-if="editableRow === index" v-model="pdfContents[index].field11" />
+            <span v-else>{{ pdf.field11 }}</span>
+          </td>
           <td>
             <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
             <button v-else @click="editRow(index)">Edit</button>
@@ -109,7 +126,7 @@ export default {
 .fixed-width-table th:nth-child(3),
 .fixed-width-table td:nth-child(3) { width: 150px; }
 .fixed-width-table th:nth-child(4),
-.fixed-width-table td:nth-child(4) { width: 150px; } /* Adjusted width for Amount */
+.fixed-width-table td:nth-child(4) { width: 150px; }
 .fixed-width-table th:nth-child(5),
 .fixed-width-table td:nth-child(5) { width: 100px; }
 .fixed-width-table th:nth-child(6),
