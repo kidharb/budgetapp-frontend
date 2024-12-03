@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export default {
-  getPdfContents() {
+  getTransactions() {
     return axios.get('/api/csvcontents/');
   },
   updatePdfContent(id, data) {

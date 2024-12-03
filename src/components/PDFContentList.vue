@@ -14,34 +14,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(pdf, index) in pdfContents" :key="pdf.id">
+        <tr v-for="(transaction, index) in transactions" :key="transaction.id">
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field4" type="datetime-local" />
-            <span v-else>{{ new Date(pdf.field4).toLocaleString() }}</span>
+            <input v-if="editableRow === index" v-model="transactions[index].transaction_date" type="datetime-local" />
+            <span v-else>{{ new Date(transaction.transaction_date).toLocaleString() }}</span>
           </td>
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field5" />
-            <span v-else>{{ pdf.field5 }}</span>
+            <input v-if="editableRow === index" v-model="transactions[index].description" />
+            <span v-else>{{ transaction.description }}</span>
           </td>
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field7" />
-            <span v-else>{{ pdf.field7 }}</span>
+            <input v-if="editableRow === index" v-model="transactions[index].category" />
+            <span v-else>{{ transaction.category }}</span>
           </td>
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field12" />
-            <span v-else>{{ pdf.field12 }}</span>
+            <select v-if="editableRow === index" v-model="transactions[index].group">
+              <option value="Recurring">Recurring</option>
+              <option value="Invest, Save and Repay">Invest, Save and Repay</option>
+              <option value="Day to Day">Day to Day</option>
+              <option value="Exceptions">Exceptions</option>
+              <option value="Transfers">Transfers</option>
+            </select>
+            <span v-else>{{ transaction.group }}</span>
           </td>
           <td>
-            <span>{{ getAmount(pdf) }}</span>
+            <span>{{ getAmount(transaction) }}</span>
           </td>
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field11" />
-            <span v-else>{{ pdf.field11 }}</span>
+            <input v-if="editableRow === index" v-model="transactions[index].balance" />
+            <span v-else>{{ transaction.balance }}</span>
           </td>
           <td>
-            <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
+            <button v-if="editableRow === index" @click="updateTransaction(transaction.id, index)">Update</button>
             <button v-else @click="editRow(index)">Edit</button>
-            <button @click.stop="deletePDF(pdf.id)">Delete</button>
+            <button @click.stop="deleteTransaction(transaction.id)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -50,52 +56,55 @@
 </template>
 
 <script>
-import pdfService from '../services/pdfService';
+import transactionService from '../services/transactionService';
 
 export default {
-  name: 'PDFContentList',
+  name: 'TransactionList',
   data() {
     return {
-      pdfContents: [],
+      transactions: [],
       editableRow: null, // Track the row being edited
     };
   },
   created() {
-    this.fetchPdfContents();
+    this.fetchTransactions();
   },
   methods: {
-    async fetchPdfContents() {
+    async fetchTransactions() {
       try {
-        const response = await pdfService.getPdfContents();
-        this.pdfContents = response.data;
+        const response = await transactionService.getTransactions();
+        this.transactions = response.data;
       } catch (error) {
-        console.error('Error fetching PDF contents:', error);
+        console.error('Error fetching transactions:', error);
       }
     },
     editRow(index) {
       this.editableRow = index; // Set the editable row
     },
-    async updatePdfContent(id, index) {
+    async updateTransaction(id, index) {
       try {
-        const updatedData = this.pdfContents[index];
-        await pdfService.updatePdfContent(id, updatedData);
+        const updatedData = this.transactions[index];
+        if (updatedData.category === "Transfers") {
+          updatedData.group = "Transfers";
+        }
+        await transactionService.updateTransaction(id, updatedData);
         this.editableRow = null; // Reset the editable row after update
       } catch (error) {
-        console.error('Error updating PDF content:', error);
+        console.error('Error updating transaction:', error);
       }
     },
-    async deletePDF(id) {
+    async deleteTransaction(id) {
       try {
-        await pdfService.deletePdfContent(id); // Use the delete API
-        this.fetchPdfContents(); // Refresh the list after deletion
+        await transactionService.deleteTransaction(id); // Use the delete API
+        this.fetchTransactions(); // Refresh the list after deletion
       } catch (error) {
-        console.error('Error deleting PDF:', error);
+        console.error('Error deleting transaction:', error);
       }
     },
-    getAmount(pdf) {
-      if (pdf.field8 != 0.0) return pdf.field8; // Money Out
-      if (pdf.field9 != 0.0) return pdf.field9; // Money In
-      if (pdf.field10 != 0.0) return pdf.field10; // Fees
+    getAmount(transaction) {
+      if (transaction.money_out != 0.0) return transaction.money_out; // Money Out
+      if (transaction.money_in != 0.0) return transaction.money_in; // Money In
+      if (transaction.fees != 0.0) return transaction.fees; // Fees
       return "N/A"; // Default if no amount is present
     },
   },
