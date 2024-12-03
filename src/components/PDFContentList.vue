@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Transaction History</h1>
+    <button @click="deleteAllTransactions" class="delete-all-button">Delete All</button> <!-- Delete All Button -->
     <table class="fixed-width-table alternate-rows">
       <thead>
         <tr>
@@ -101,6 +102,14 @@ export default {
         console.error('Error deleting transaction:', error);
       }
     },
+    async deleteAllTransactions() { // Delete All Method
+      try {
+        await transactionService.deleteAllTransactions(); // Call delete all service
+        this.fetchTransactions(); // Refresh the list after deletion
+      } catch (error) {
+        console.error('Error deleting all transactions:', error);
+      }
+    },
     getAmount(transaction) {
       if (transaction.money_out != 0.0) return transaction.money_out; // Money Out
       if (transaction.money_in != 0.0) return transaction.money_in; // Money In
@@ -140,6 +149,21 @@ export default {
 .fixed-width-table td:nth-child(5) { width: 100px; }
 .fixed-width-table th:nth-child(6),
 .fixed-width-table td:nth-child(6) { width: 100px; }
+
+/* Delete All Button Style */
+.delete-all-button {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-all-button:hover {
+  background-color: #d32f2f; /* Darker Red */
+}
 
 /* Alternating row colors */
 .alternate-rows tbody tr:nth-child(odd) {
