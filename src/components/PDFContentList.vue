@@ -4,65 +4,23 @@
     <table class="fixed-width-table alternate-rows">
       <thead>
         <tr>
-          <th>Acc #</th>
-          <th>Posting Date</th>
           <th>Transaction Date</th>
           <th>Description</th>
-          <th>Original Description</th>
           <th>Category</th>
-          <th>Money In</th>
-          <th>Money Out</th>
-          <th>Fees</th>
+          <th>Amount</th>
           <th>Balance</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(pdf, index) in pdfContents" :key="pdf.id" :class="{ highlight: pdf.field9 !== 0 }">
+        <tr v-for="(pdf, index) in pdfContents" :key="pdf.id">
+          <td>{{ new Date(pdf.field4).toLocaleString() }}</td>
+          <td>{{ pdf.field5 }}</td>
+          <td>{{ pdf.field7 }}</td>
+          <td>{{ getAmount(pdf) }}</td> <!-- Combine columns into Amount -->
+          <td>{{ pdf.field11 }}</td>
           <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field2" />
-            <span v-else>{{ pdf.field2 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field3" />
-            <span v-else>{{ pdf.field3 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field4" />
-            <span v-else>{{ new Date(pdf.field4).toLocaleString() }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field5" />
-            <span v-else>{{ pdf.field5 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field6" />
-            <span v-else>{{ pdf.field6 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field7" />
-            <span v-else>{{ pdf.field7 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field8" />
-            <span v-else>{{ pdf.field8 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field9" />
-            <span v-else>{{ pdf.field9 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field10" />
-            <span v-else>{{ pdf.field10 }}</span>
-          </td>
-          <td>
-            <input v-if="editableRow === index" v-model="pdfContents[index].field11" />
-            <span v-else>{{ pdf.field11 }}</span>
-          </td>
-          <td>
-            <button v-if="editableRow === index" @click="updatePdfContent(pdf.id, index)">Update</button>
-            <button v-else @click="editRow(index)">Edit</button>
-            <button @click="deletePDF(pdf.id)">Delete</button> <!-- Add this line -->
+            <button @click.stop="deletePDF(pdf.id)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -113,6 +71,12 @@ export default {
         console.error('Error deleting PDF:', error);
       }
     },
+    getAmount(pdf) {
+      if (pdf.field8 != 0.0) return pdf.field8; // Money Out
+      if (pdf.field9 != 0.0) return pdf.field9; // Money In
+      if (pdf.field10 != 0.0) return pdf.field10; // Fees
+      return "N/A"; // Default if no amount is present
+    },
   },
 };
 </script>
@@ -134,29 +98,18 @@ export default {
   padding: 8px;
 }
 
-/* Fixed widths for columns */
 .fixed-width-table th:nth-child(1),
-.fixed-width-table td:nth-child(1) { width: 100px; }
+.fixed-width-table td:nth-child(1) { width: 150px; }
 .fixed-width-table th:nth-child(2),
-.fixed-width-table td:nth-child(2) { width: 150px; }
+.fixed-width-table td:nth-child(2) { width: 200px; }
 .fixed-width-table th:nth-child(3),
-.fixed-width-table td:nth-child(3) { width: 200px; }
+.fixed-width-table td:nth-child(3) { width: 150px; }
 .fixed-width-table th:nth-child(4),
-.fixed-width-table td:nth-child(4) { width: 250px; }
+.fixed-width-table td:nth-child(4) { width: 150px; } /* Adjusted width for Amount */
 .fixed-width-table th:nth-child(5),
-.fixed-width-table td:nth-child(5) { width: 300px; }
+.fixed-width-table td:nth-child(5) { width: 100px; }
 .fixed-width-table th:nth-child(6),
-.fixed-width-table td:nth-child(6) { width: 350px; }
-.fixed-width-table th:nth-child(7),
-.fixed-width-table td:nth-child(7) { width: 400px; }
-.fixed-width-table th:nth-child(8),
-.fixed-width-table td:nth-child(8) { width: 450px; }
-.fixed-width-table th:nth-child(9),
-.fixed-width-table td:nth-child(9) { width: 500px; }
-.fixed-width-table th:nth-child(10),
-.fixed-width-table td:nth-child(10) { width: 550px; }
-.fixed-width-table th:nth-child(11),
-.fixed-width-table td:nth-child(11) { width: 600px; }
+.fixed-width-table td:nth-child(6) { width: 100px; }
 
 /* Alternating row colors */
 .alternate-rows tbody tr:nth-child(odd) {
